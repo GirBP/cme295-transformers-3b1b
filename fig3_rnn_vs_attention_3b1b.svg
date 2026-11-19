@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad3" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#070a10"/>
+    </radialGradient>
+    <filter id="glow3" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <marker id="arrRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="#FC6255"/>
+    </marker>
+    <marker id="arrYel" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="#FFFF00"/>
+    </marker>
+  </defs>
+
+  <!-- Background & Grid -->
+  <rect width="960" height="440" rx="14" fill="url(#bgGrad3)" stroke="#1e293b" stroke-width="2"/>
+  <g stroke="#58C4DD" stroke-opacity="0.07" stroke-width="1">
+    <line x1="0" y1="75" x2="960" y2="75"/><line x1="0" y1="150" x2="960" y2="150"/>
+    <line x1="0" y1="225" x2="960" y2="225"/><line x1="0" y1="300" x2="960" y2="300"/>
+    <line x1="0" y1="375" x2="960" y2="375"/>
+    <line x1="160" y1="0" x2="160" y2="440"/><line x1="320" y1="0" x2="320" y2="440"/>
+    <line x1="480" y1="0" x2="480" y2="440"/><line x1="640" y1="0" x2="640" y2="440"/>
+    <line x1="800" y1="0" x2="800" y2="440"/>
+  </g>
+
+  <!-- Header -->
+  <text x="34" y="42" fill="#ECECEC" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="bold">
+    3. Послідовні моделі (RNN / LSTM) проти прямого зв'язку Self-Attention
+  </text>
+  <text x="34" y="65" fill="#FC6255" font-family="Georgia, serif" font-style="italic" font-size="15">
+    Чому інформаційне «пляшкове горло» та затухання градієнтів обмежували RNN (00:48:26 – 00:57:16)
+  </text>
+
+  <!-- TOP CARD: RNN Sequential Bottleneck -->
+  <rect x="28" y="82" width="904" height="162" rx="10" fill="#0b101b" fill-opacity="0.88" stroke="#FC6255" stroke-opacity="0.55" stroke-width="1.5"/>
+  <text x="48" y="108" fill="#FC6255" font-family="sans-serif" font-size="14" font-weight="bold">
+    1. RNN / LSTM: Послідовне «пляшкове горло» h_t = tanh(W_h h_{t-1} + W_x x_t) — Шлях сигналу O(L) кроків
+  </text>
+  <text x="48" y="128" fill="#8B949E" font-family="Georgia, serif" font-style="italic" font-size="13">
+    Градієнт затухає як добуток якобіанів: ∂L/∂h₁ = (∂L/∂h₆) · ∏ (∂h_k / ∂h_{k-1}) → інформація про "trophy" губиться до кроку h₆
+  </text>
+
+  <!-- 6 RNN Steps with fading opacity -->
+  <g transform="translate(65, 148)">
+    <!-- Step 1 -->
+    <circle cx="45" cy="30" r="26" fill="#FC6255" fill-opacity="0.8" stroke="#FC6255" stroke-width="2.2"/>
+    <text x="45" y="35" fill="#ECECEC" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₁</text>
+    <text x="45" y="76" fill="#8B949E" font-family="monospace" font-size="14" text-anchor="middle">"The"</text>
+    <line x1="75" y1="30" x2="148" y2="30" stroke="#FC6255" stroke-width="2.5" marker-end="url(#arrRed)"/>
+
+    <!-- Step 2 -->
+    <circle cx="182" cy="30" r="26" fill="#FC6255" fill-opacity="0.65" stroke="#FFFF00" stroke-width="2.2"/>
+    <text x="182" y="35" fill="#FFFF00" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₂</text>
+    <text x="182" y="76" fill="#FFFF00" font-family="monospace" font-weight="bold" font-size="14" text-anchor="middle">"trophy"</text>
+    <line x1="212" y1="30" x2="285" y2="30" stroke="#FC6255" stroke-width="2.2" marker-end="url(#arrRed)"/>
+
+    <!-- Step 3 -->
+    <circle cx="319" cy="30" r="26" fill="#FC6255" fill-opacity="0.48" stroke="#FC6255" stroke-width="2"/>
+    <text x="319" y="35" fill="#ECECEC" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₃</text>
+    <text x="319" y="76" fill="#8B949E" font-family="monospace" font-size="14" text-anchor="middle">"didn't"</text>
+    <line x1="349" y1="30" x2="422" y2="30" stroke="#FC6255" stroke-width="1.9" marker-end="url(#arrRed)"/>
+
+    <!-- Step 4 -->
+    <circle cx="456" cy="30" r="26" fill="#FC6255" fill-opacity="0.32" stroke="#FC6255" stroke-width="1.8"/>
+    <text x="456" y="35" fill="#ECECEC" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₄</text>
+    <text x="456" y="76" fill="#8B949E" font-family="monospace" font-size="14" text-anchor="middle">"fit"</text>
+    <line x1="486" y1="30" x2="559" y2="30" stroke="#FC6255" stroke-width="1.6" marker-end="url(#arrRed)"/>
+
+    <!-- Step 5 -->
+    <circle cx="593" cy="30" r="26" fill="#FC6255" fill-opacity="0.2" stroke="#FC6255" stroke-width="1.5"/>
+    <text x="593" y="35" fill="#ECECEC" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₅</text>
+    <text x="593" y="76" fill="#8B949E" font-family="monospace" font-size="14" text-anchor="middle">"because"</text>
+    <line x1="623" y1="30" x2="696" y2="30" stroke="#FC6255" stroke-width="1.4" marker-end="url(#arrRed)"/>
+
+    <!-- Step 6 (Bottleneck!) -->
+    <circle cx="730" cy="30" r="26" fill="#FC6255" fill-opacity="0.1" stroke="#FC6255" stroke-width="2" stroke-dasharray="4,3"/>
+    <text x="730" y="35" fill="#FC6255" font-family="Georgia, serif" font-weight="bold" font-size="16" text-anchor="middle">h₆</text>
+    <text x="730" y="76" fill="#ECECEC" font-family="monospace" font-weight="bold" font-size="14" text-anchor="middle">"it"</text>
+    <text x="772" y="34" fill="#FC6255" font-family="sans-serif" font-size="12" font-weight="bold">← Пам'ять розмита!</text>
+  </g>
+
+  <!-- BOTTOM CARD: Self-Attention Direct Parallel Routing -->
+  <rect x="28" y="258" width="904" height="162" rx="10" fill="#0b101b" fill-opacity="0.88" stroke="#58C4DD" stroke-opacity="0.6" stroke-width="1.5"/>
+  <text x="48" y="284" fill="#58C4DD" font-family="sans-serif" font-size="14" font-weight="bold">
+    2. Self-Attention: Прямий паралельний доступ O(1) між будь-якими двома токенами
+  </text>
+
+  <g transform="translate(65, 368)">
+    <!-- Attention Bezier Arcs from "it" (x=730) to all preceding words -->
+    <path d="M 730 0 Q 387 -86 45 0" fill="none" stroke="#58C4DD" stroke-opacity="0.28" stroke-width="1.5"/>
+    <path d="M 730 0 Q 456 -88 182 0" fill="none" stroke="#FFFF00" stroke-width="4.5" filter="url(#glow3)" marker-end="url(#arrYel)"/>
+    <path d="M 730 0 Q 524 -58 319 0" fill="none" stroke="#58C4DD" stroke-opacity="0.3" stroke-width="1.5"/>
+    <path d="M 730 0 Q 593 -48 456 0" fill="none" stroke="#58C4DD" stroke-opacity="0.45" stroke-width="2"/>
+    <path d="M 730 0 Q 661 -35 593 0" fill="none" stroke="#58C4DD" stroke-opacity="0.3" stroke-width="1.5"/>
+
+    <!-- Weight label on glowing main arc -->
+    <rect x="368" y="-76" width="185" height="26" rx="6" fill="#0b101b" stroke="#FFFF00" stroke-width="1.5"/>
+    <text x="460" y="-58" fill="#FFFF00" font-family="Georgia, serif" font-weight="bold" font-size="14" text-anchor="middle">
+      α("it" → "trophy") = 0.64
+    </text>
+
+    <!-- Token Pills -->
+    <rect x="0" y="2" width="90" height="34" rx="7" fill="#58C4DD" fill-opacity="0.14" stroke="#58C4DD" stroke-width="1.4"/>
+    <text x="45" y="24" fill="#ECECEC" font-family="monospace" font-size="14" text-anchor="middle">"The"</text>
+
+    <rect x="132" y="2" width="100" height="34" rx="7" fill="#FFFF00" fill-opacity="0.24" stroke="#FFFF00" stroke-width="2.4" filter="url(#glow3)"/>
+    <text x="182" y="24" fill="#FFFF00" font-family="monospace" font-weight="bold" font-size="15" text-anchor="middle">"trophy"</text>
+
+    <rect x="269" y="2" width="100" height="34" rx="7" fill="#58C4DD" fill-opacity="0.14" stroke="#58C4DD" stroke-width="1.4"/>
+    <text x="319" y="24" fill="#ECECEC" font-family="monospace" font-size="14" text-anchor="middle">"didn't"</text>
+
+    <rect x="411" y="2" width="90" height="34" rx="7" fill="#58C4DD" fill-opacity="0.14" stroke="#58C4DD" stroke-width="1.4"/>
+    <text x="456" y="24" fill="#ECECEC" font-family="monospace" font-size="14" text-anchor="middle">"fit"</text>
+
+    <rect x="543" y="2" width="100" height="34" rx="7" fill="#58C4DD" fill-opacity="0.14" stroke="#58C4DD" stroke-width="1.4"/>
+    <text x="593" y="24" fill="#ECECEC" font-family="monospace" font-size="14" text-anchor="middle">"because"</text>
+
+    <rect x="685" y="2" width="90" height="34" rx="7" fill="#58C4DD" fill-opacity="0.28" stroke="#58C4DD" stroke-width="2.4" filter="url(#glow3)"/>
+    <text x="730" y="24" fill="#58C4DD" font-family="monospace" font-weight="bold" font-size="15" text-anchor="middle">"it" (Q)</text>
+  </g>
+</svg>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stanford CME 295 — Лекція 1: Transformers (3Blue1Brown Interactive Study Guide)</title>
+  <style>
+    :root {
+      --bg-deep: #070a10;
+      --bg-card: #0d131f;
+      --bg-elevated: #131c2e;
+      --border: #1e293b;
+      --blue: #58C4DD;
+      --yellow: #FFFF00;
+      --green: #83C167;
+      --teal: #5CD0B3;
+      --red: #FC6255;
+      --purple: #9A72AC;
+      --gold: #F0AC5F;
+      --text: #ECECEC;
+      --muted: #8B949E;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 18% 12%, rgba(88, 196, 221, 0.08), transparent 35%),
+        radial-gradient(circle at 82% 28%, rgba(154, 114, 172, 0.08), transparent 35%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .cm-serif {
+      font-family: "CMU Serif", "Computer Modern", "Latin Modern Math", Georgia, "Times New Roman", serif;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+    /* Sticky Navigation */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7, 10, 16, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+    .navbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-links a:hover {
+      color: var(--blue);
+      border-color: rgba(88, 196, 221, 0.35);
+      background: rgba(88, 196, 221, 0.08);
+    }
+    /* Hero Header */
+    .hero {
+      padding: 28px 32px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0d1424 0%, #090d16 100%);
+      border: 1px solid rgba(88, 196, 221, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      margin-bottom: 32px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .badge {
+      font-size: 12px;
+      font-family: monospace;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(88, 196, 221, 0.12);
+      color: var(--blue);
+      border: 1px solid rgba(88, 196, 221, 0.35);
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: -0.01em;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .hero a {
+      color: var(--yellow);
+      text-decoration: none;
+    }
+    /* Interactive Player Box */
+    .player-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(88, 196, 221, 0.35);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.65);
+      margin-bottom: 40px;
+    }
+    .player-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #0a0f1a;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tab-btn {
+      background: #131c2e;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+      border-color: var(--blue);
+    }
+    .tab-btn.active {
+      background: rgba(88, 196, 221, 0.2);
+      color: var(--blue);
+      border-color: var(--blue);
+      box-shadow: 0 0 14px rgba(88, 196, 221, 0.25);
+    }
+    .math-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 18px;
+      background: rgba(0, 0, 0, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 17px;
+    }
+    .canvas-wrap {
+      background: radial-gradient(circle at 50% 42%, #131b2e 0%, #070a12 100%);
+      position: relative;
+    }
+    canvas {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+    }
+    .player-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: #080c14;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    /* Content Sections */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .section-header h2 {
+      margin: 0;
+      font-size: 23px;
+      color: var(--text);
+    }
+    .timecode {
+      font-family: monospace;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 0, 0.12);
+      color: var(--yellow);
+      border: 1px solid rgba(255, 255, 0, 0.35);
+    }
+    .svg-frame {
+      margin: 18px 0 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #26354d;
+      background: #070a10;
+    }
+    .svg-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Math Formula Blocks */
+    .math-box {
+      background: #080c14;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 18px;
+      text-align: center;
+      overflow-x: auto;
+    }
+    .math-box.yellow { border-left-color: var(--yellow); }
+    .math-box.green { border-left-color: var(--green); }
+    .math-box.red { border-left-color: var(--red); }
+    .callout {
+      background: rgba(88, 196, 221, 0.08);
+      border: 1px solid rgba(88, 196, 221, 0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: 14.5px;
+    }
+    .callout.warn {
+      background: rgba(252, 98, 85, 0.08);
+      border-color: rgba(252, 98, 85, 0.35);
+    }
+    .callout.tip {
+      background: rgba(131, 193, 103, 0.08);
+      border-color: rgba(131, 193, 103, 0.35);
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    th {
+      background: var(--bg-elevated);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+    code {
+      font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--teal);
+    }
+    details {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    summary {
+      font-weight: 600;
+      color: var(--yellow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Navigation -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div style="font-weight: 700; color: var(--blue); font-size: 15px;">
+        🌌 Stanford CME 295 • Lecture 1 (3Blue1Brown Edition)
+      </div>
+      <div class="nav-links">
+        <a href="#player">▶ Інтерактивний 3b1b Плеєр</a>
+        <a href="#sec1">1. Токенізація (BPE)</a>
+        <a href="#sec2">2. Word2Vec</a>
+        <a href="#sec3">3. RNN vs Attention</a>
+        <a href="#sec4">4. Self-Attention (Q,K,V)</a>
+        <a href="#sec5">5. Encoder–Decoder</a>
+        <a href="#quiz">🧠 Самоперевірка</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Header -->
+    <header class="hero">
+      <div class="badge-row">
+        <span class="badge">Stanford CME 295 (Autumn 2026)</span>
+        <span class="badge" style="color: var(--yellow); border-color: rgba(255,255,0,0.35); background: rgba(255,255,0,0.1);">3Blue1Brown Visual Style</span>
+        <span class="badge" style="color: var(--green); border-color: rgba(131,193,103,0.35); background: rgba(131,193,103,0.1);">Afshine &amp; Shervine Amidi</span>
+      </div>
+      <h1 class="cm-serif">Лекція 1: Архітектура Transformer від перших принципів</h1>
+      <p>
+        Інтерактивний візуальний підручник та конспект до лекції
+        <a href="https://www.youtube.com/watch?v=114i2Kz-LZA" target="_blank">Stanford CME295: Transformers &amp; LLMs — Lecture 1</a>.
+      </p>
+    </header>
+
+    <!-- INTERACTIVE 3BLUE1BROWN ANIMATION PLAYER -->
+    <section id="player" class="player-card">
+      <div class="player-tabs">
+        <div class="tab-group" id="sceneTabs">
+          <button data-scene="0" class="tab-btn active">1. Токенізація (BPE)</button>
+          <button data-scene="1" class="tab-btn">2. Word2Vec ℝᵈ</button>
+          <button data-scene="2" class="tab-btn">3. RNN vs Attention</button>
+          <button data-scene="3" class="tab-btn">4. Q · K · V (Інтерактивно)</button>
+          <button data-scene="4" class="tab-btn">5. Encoder–Decoder &amp; Маска</button>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="playPauseBtn" class="tab-btn" style="color: var(--text);">⏸ Пауза</button>
+          <button id="restartBtn" class="tab-btn" title="Перезапустити">↺</button>
+        </div>
+      </div>
+
+      <div class="math-header cm-serif">
+        <div id="mathBanner">
+          <span style="color: var(--blue); font-weight: bold;">Токенізація (BPE)</span>: &nbsp;
+          <i>V</i><sub>k+1</sub> = <i>V</i><sub>k</sub> &cup; { argmax<sub>(a,b)</sub> freq(<i>a, b</i>) } &nbsp;&mdash;&nbsp;
+          Компроміс <span style="color: var(--yellow);">|<i>V</i>|</span> &harr; <span style="color: var(--green);"><i>L</i></span>
+        </div>
+        <div id="scaleControl" style="display: none; align-items: center; gap: 10px; font-size: 13px; font-family: monospace; color: var(--teal);">
+          <span>Масштаб &radic;d<sub>k</sub>:</span>
+          <input id="scaleSlider" type="range" min="1" max="16" step="1" value="8" style="cursor: pointer;" />
+          <span id="scaleVal" style="color: var(--yellow); font-weight: bold;">8.0</span>
+        </div>
+        <span id="timeBadge" class="timecode">00:16:56</span>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="manimCanvas" height="310"></canvas>
+      </div>
+
+      <div class="player-footer">
+        <div id="sceneCaption">
+          <strong style="color: var(--blue);">Byte-Pair Encoding:</strong> Часті слова залишаються єдиним токеном, рідкісні розкладаються на морфеми без [UNK].
+        </div>
+        <div id="interactiveBadge" style="color: var(--yellow); font-family: monospace;">
+          ✨ Клікніть по сцені для взаємодії
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: TOKENIZATION -->
+    <section id="sec1" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">1. Токенізація та Byte-Pair Encoding (BPE)</h2>
+        <span class="timecode">⏱ 00:16:56 – 00:37:27</span>
+      </div>
+      <p>
+        Нейронні мережі працюють із числами, тому першим етапом будь-якої LLM є перетворення тексту на послідовність цілих індексів токенів
+        <i>(t₁, t₂, …, t<sub>L</sub>)</i> зі словника <i>V</i>.
+      </p>
+      <div class="svg-frame">
+        <img src="fig1_tokenization_bpe_3b1b.svg" alt="Токенізація: Word vs Character vs Subword BPE" />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Підхід</th>
+            <th>Розмір словника |V|</th>
+            <th>Довжина послідовності L</th>
+            <th>Переваги</th>
+            <th>Недоліки</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Word-level</strong> (по словах)</td>
+            <td>Дуже великий (&gt; 500 000)</td>
+            <td>Коротка</td>
+            <td>Зберігає цілісне значення слів</td>
+            <td>Проблема <strong>OOV</strong> (Out-of-Vocabulary → <code>[UNK]</code>); різні форми слова (<code>run</code>, <code>running</code>) не мають спільного представлення</td>
+          </tr>
+          <tr>
+            <td><strong>Character-level</strong> (по символах)</td>
+            <td>Дуже малий (≈ 256)</td>
+            <td>У 4–6 разів довша</td>
+            <td>Немає невідомих слів (OOV)</td>
+            <td>Окремі літери не несуть семантики; квадратична складність Attention <i>O(L²)</i> зростає у 25+ разів</td>
+          </tr>
+          <tr>
+            <td><strong>Subword (BPE / WordPiece)</strong></td>
+            <td>Оптимальний (32k – 128k)</td>
+            <td>Помірна</td>
+            <td>Часті слова — 1 токен; рідкісні розбиваються на значущі морфеми (<code>un</code> + <code>##aff</code> + <code>##able</code>); немає <code>[UNK]</code></td>
+            <td>Потребує попереднього тренування токенізатора на корпусі</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 2: WORD2VEC -->
+    <section id="sec2" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">2. Векторні представлення слів та Word2Vec (CBOW і Skip-gram)</h2>
+        <span class="timecode">⏱ 00:37:27 – 00:48:26</span>
+      </div>
+      <p>
+        One-Hot вектори <i>e<sub>i</sub> &in; {0, 1}<sup>|V|</sup></i> є розрідженими та попарно ортогональними (скалярний добуток між будь-якими двома різними словами дорівнює нулю).
+        Щоб закодувати семантичну близькість, ми проєктуємо їх у щільний простір <i>&real;<sup>d</sup></i> (де <i>d &ll; |V|</i>) через матрицю ембедингів <i>E &in; &real;<sup>d &times; |V|</sup></i>:
+      </p>
+      <div class="math-box green cm-serif">
+        <i>v<sub>i</sub> = E &middot; e<sub>i</sub> &in; &real;<sup>d</sup></i>
+        &nbsp;&nbsp;&mdash;&nbsp;&nbsp;
+        <span style="color: var(--yellow);"><i>v&#8407;</i>(king) &minus; <i>v&#8407;</i>(man) + <i>v&#8407;</i>(woman) &approx; <i>v&#8407;</i>(queen)</span>
+      </div>
+      <div class="svg-frame">
+        <img src="fig2_word2vec_space_3b1b.svg" alt="Word2Vec: CBOW, Skip-gram та семантичний простір" />
+      </div>
+      <div class="callout tip">
+        <strong>💡 Як навчається Word2Vec (Self-Supervised Proxy Tasks):</strong>
+        <ul>
+          <li><strong>CBOW (Continuous Bag-of-Words):</strong> усереднює вектори контекстного вікна <i>{w<sub>t-c</sub>, …, w<sub>t+c</sub>}</i>, щоб передбачити центральне слово <i>w<sub>t</sub></i>.</li>
+          <li><strong>Skip-gram:</strong> за центральним словом <i>w<sub>t</sub></i> передбачає кожне слово контексту через Softmax скалярних добутків:
+            <i>P(w<sub>O</sub> | w<sub>I</sub>) = exp(u<sub>w<sub>O</sub></sub><sup>T</sup> v<sub>w<sub>I</sub></sub>) / &sum;<sub>w&in;V</sub> exp(u<sub>w</sub><sup>T</sup> v<sub>w<sub>I</sub></sub>)</i>.
+            Щоб не сумувати по всьому словнику <i>|V|</i> на кожному кроці, застосовують <strong>Negative Sampling</strong>.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 3: RNN VS ATTENTION -->
+    <section id="sec3" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">3. Послідовні моделі (RNN, LSTM) проти механізму Attention</h2>
+        <span class="timecode">⏱ 00:48:26 – 00:57:16</span>
+      </div>
+      <div class="svg-frame">
+        <img src="fig3_rnn_vs_attention_3b1b.svg" alt="RNN Sequential Bottleneck vs Self-Attention" />
+      </div>
+      <div class="callout warn">
+        <strong>⚠️ Два фундаментальні обмеження RNN та LSTM:</strong>
+        <ol>
+          <li><strong>Інформаційне «пляшкове горло» та затухання градієнтів:</strong> Під час зворотного поширення помилки в часі (BPTT) градієнт від кроку <i>T</i> до кроку <i>1</i> дорівнює добутку матриць Якобі:
+            <span class="cm-serif"><i>&part;L<sub>T</sub> / &part;h<sub>1</sub> = (&part;L<sub>T</sub> / &part;h<sub>T</sub>) &middot; &prod;<sub>k=2..T</sub> (&part;h<sub>k</sub> / &part;h<sub>k-1</sub>)</i></span>. На довгих реченнях інформація про початок зникає.</li>
+          <li><strong>Відсутність паралелізації <i>O(L)</i>:</strong> Стан <i>h<sub>t</sub></i> неможливо обчислити, поки не обчислено <i>h<sub>t-1</sub></i>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SELF-ATTENTION Q, K, V -->
+    <section id="sec4" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">4. Механізм Scaled Dot-Product Self-Attention (Query, Key, Value)</h2>
+        <span class="timecode">⏱ 00:57:16 – 01:09:35</span>
+      </div>
+      <p>
+        У <strong>Self-Attention</strong> кожен токен послідовності одночасно виступає у трьох ролях за допомогою лінійних проєкцій
+        <i>Q = X W<sub>Q</sub></i>, <i>K = X W<sub>K</sub></i>, <i>V = X W<sub>V</sub></i>:
+      </p>
+      <div class="math-box yellow cm-serif" style="font-size: 22px;">
+        Attention(<span style="color: var(--blue);"><i>Q</i></span>, <span style="color: var(--yellow);"><i>K</i></span>, <span style="color: var(--green);"><i>V</i></span>)
+        = softmax&#8289;(&nbsp;<span style="color: var(--blue);"><i>Q</i></span><span style="color: var(--yellow);"><i>K</i><sup>T</sup></span> / <span style="color: var(--teal);">&radic;<i>d<sub>k</sub></i></span>&nbsp;) <span style="color: var(--green);"><i>V</i></span>
+      </div>
+      <div class="svg-frame">
+        <img src="fig4_self_attention_qkv_3b1b.svg" alt="Scaled Dot-Product Self-Attention Q, K, V" />
+      </div>
+      <div class="callout">
+        <strong>📐 Екзаменаційне доведення CME 295: Чому ми ділимо на &radic;d<sub>k</sub>?</strong><br/>
+        Якщо компоненти векторів <i>q, k &in; &real;<sup>d<sub>k</sub></sup></i> є незалежними випадковими величинами з нульовим середнім <i>&mu; = 0</i> та одиничною дисперсією <i>&sigma;² = 1</i>, то їхній скалярний добуток <i>q &middot; k = &sum;<sub>m=1..d<sub>k</sub></sub> q<sub>m</sub> k<sub>m</sub></i> має математичне сподівання <i>0</i> і дисперсію <strong>Var(<i>q &middot; k</i>) = <i>d<sub>k</sub></i></strong> (стандартне відхилення &radic;<i>d<sub>k</sub></i>).
+        При великому <i>d<sub>k</sub></i> скалярні добутки стають великими за модулем і виштовхують Softmax у зону насичення (де одна вага &approx; 1, а решта &approx; 0), через що <strong>градієнти зникають</strong>. Ділення на &radic;<i>d<sub>k</sub></i> повертає дисперсію до <strong>Var = 1</strong>!
+      </div>
+    </section>
+
+    <!-- SECTION 5: TRANSFORMER ARCHITECTURE -->
+    <section id="sec5" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">5. Повна архітектура Transformer: Encoder, Decoder та Causal Mask</h2>
+        <span class="timecode">⏱ 01:09:35 – 01:27:35</span>
+      </div>
+      <div class="svg-frame">
+        <img src="fig5_transformer_arch_3b1b.svg" alt="Повна архітектура Transformer Encoder-Decoder" />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Тип Attention у Transformer</th>
+            <th>Де знаходиться</th>
+            <th>Джерело Query (Q)</th>
+            <th>Джерело Key (K) та Value (V)</th>
+            <th>Causal Mask (-&infin;)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Encoder Self-Attention</strong></td>
+            <td>Encoder</td>
+            <td>Попередній шар Encoder</td>
+            <td>Попередній шар Encoder</td>
+            <td><strong>Ні</strong> (двонапрямний контекст)</td>
+          </tr>
+          <tr>
+            <td><strong>2. Masked Decoder Self-Attention</strong></td>
+            <td>Decoder (1-й підшар)</td>
+            <td>Попередній шар Decoder</td>
+            <td>Попередній шар Decoder</td>
+            <td><strong>Так</strong> (бачить лише позиції &le; <i>t</i>)</td>
+          </tr>
+          <tr>
+            <td><strong>3. Encoder–Decoder Cross-Attention</strong></td>
+            <td>Decoder (2-й підшар)</td>
+            <td>З 1-го підшару <strong>Decoder</strong></td>
+            <td>З фінального виходу <strong>Encoder</strong></td>
+            <td><strong>Ні</strong> (бачить усі слова вхідного речення)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 6: SELF-CHECK QUIZ -->
+    <section id="quiz" class="section-card">
+      <div class="section-header">
+        <h2 class="cm-serif">🧠 Контрольні питання для самоперевірки (Stanford CME 295)</h2>
+        <span class="timecode">Натисніть, щоб відкрити відповідь</span>
+      </div>
+      <details>
+        <summary>1. Що станеться з виходом Self-Attention, якщо переставити місцями слова речення без Positional Encoding?</summary>
+        <p style="margin-top: 10px; color: var(--text);">
+          Вектори на виході залишаться абсолютно тими самими, лише переставляться місцями у тому ж порядку (властивість <em>permutation equivariance</em>). Без Positional Encoding механізм Self-Attention трактує вхід як невпорядковану множину векторів.
+        </p>
+      </details>
+      <details>
+        <summary>2. Чому в Cross-Attention матриця Q береться з Decoder, а K та V — з Encoder?</summary>
+        <p style="margin-top: 10px; color: var(--text);">
+          Декодер генерує переклад і формує запит <i>Q &in; &real;<sup>L<sub>dec</sub> &times; d<sub>k</sub></sup></i> («яке слово оригіналу мені зараз потрібне?»). Енкодер тримає ключі <i>K &in; &real;<sup>L<sub>enc</sub> &times; d<sub>k</sub></sup></i> та значення <i>V &in; &real;<sup>L<sub>enc</sub> &times; d<sub>v</sub></sup></i>. Добуток <i>(Q K<sup>T</sup>) V</i> дає матрицю розміру <i>L<sub>dec</sub> &times; d<sub>v</sub></i> — рівно по одному контекстному вектору на кожен токен декодера.
+        </p>
+      </details>
+      <details>
+        <summary>3. Чому в Causal Mask ми додаємо -&infin; перед Softmax, а не множимо на 0 після Softmax?</summary>
+        <p style="margin-top: 10px; color: var(--text);">
+          Якби ми зануляли ваги після Softmax, сума ваг у рядку перестала б дорівнювати 1, а в знаменнику Softmax залишилися б експоненти майбутніх токенів (витік інформації з майбутнього). Додавання <i>-&infin;</i> до логітів дає <i>exp(-&infin;) = 0</i> і автоматично нормалізує суму дозволених ваг до 1.
+        </p>
+      </details>
+    </section>
+  </div>
+
+  <!-- 3Blue1Brown Interactive Canvas Script -->
+  <script>
+    const canvas = document.getElementById('manimCanvas');
+    const ctx = canvas.getContext('2d');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const mathBanner = document.getElementById('mathBanner');
+    const timeBadge = document.getElementById('timeBadge');
+    const sceneCaption = document.getElementById('sceneCaption');
+    const interactiveBadge = document.getElementById('interactiveBadge');
+    const scaleControl = document.getElementById('scaleControl');
+    const scaleSlider = document.getElementById('scaleSlider');
+    const scaleVal = document.getElementById('scaleVal');
+    const sceneBtns = document.querySelectorAll('#sceneTabs .tab-btn');
+
+    const C = {
+      BLUE: '#58C4DD',
+      YELLOW: '#FFFF00',
+      GOLD: '#F0AC5F',
+      GREEN: '#83C167',
+      TEAL: '#5CD0B3',
+      RED: '#FC6255',
+      PURPLE: '#9A72AC',
+      WHITE: '#ECECEC',
+      MUTED: '#8B949E'
+    };
+
+    let currentScene = 0;
+    let isPlaying = true;
+    let t = 0;
+    let lastTs = performance.now();
+    let selectedTokenIdx = 3;
+    let sqrtDk = 8.0;
+    let word2vecMode = 0;
+
+    const scenes = [
+      {
+        time: '00:16:56',
+        math: `<span style="color:#58C4DD;font-weight:bold;">Токенізація (BPE)</span>: &nbsp;<i>V</i><sub>k+1</sub> = <i>V</i><sub>k</sub> &cup; { argmax<sub>(a,b)</sub> freq(<i>a, b</i>) } &nbsp;&mdash;&nbsp; Компроміс <span style="color:#FFFF00;">|<i>V</i>|</span> &harr; <span style="color:#83C167;"><i>L</i></span>`,
+        caption: `<strong style="color:#58C4DD;">Byte-Pair Encoding:</strong> Часті слова залишаються єдиним токеном, рідкісні розкладаються на морфеми без [UNK].`,
+        badge: '✨ Клікніть по канвасу для наступного кроку BPE'
+      },
+      {
+        time: '00:37:27',
+        math: `<span style="color:#83C167;font-weight:bold;">Word2Vec</span>: &nbsp;<i>v<sub>i</sub> = E e<sub>i</sub> &in; &real;<sup>d</sup></i> &nbsp;&mdash;&nbsp; <span style="color:#FFFF00;"><i>v&#8407;</i>(king) &minus; <i>v&#8407;</i>(man) + <i>v&#8407;</i>(woman) &approx; <i>v&#8407;</i>(queen)</span>`,
+        caption: `<strong style="color:#83C167;">Простір ембедингів ℝᵈ:</strong> Ліворуч — нейромережа CBOW / Skip-gram; праворуч — паралелограм векторів.`,
+        badge: '✨ Клікніть по канвасу: CBOW ⇄ Skip-gram'
+      },
+      {
+        time: '00:48:26',
+        math: `<span style="color:#FC6255;font-weight:bold;">RNN:</span> <i>h<sub>t</sub> = &tanh;(W<sub>h</sub>h<sub>t&minus;1</sub> + W<sub>x</sub>x<sub>t</sub>)</i> &nbsp;&nbsp;vs&nbsp;&nbsp; <span style="color:#58C4DD;font-weight:bold;">Attention:</span> прямий доступ <i>O</i>(1)`,
+        caption: `<strong style="color:#FFFF00;">Пляшкове горло RNN проти Attention:</strong> У RNN сигнал затухає за O(L) кроків; Attention з'єднує "it" → "trophy" напряму.`,
+        badge: '✨ Потік фотонів показує вагу уваги α = 0.64'
+      },
+      {
+        time: '00:59:54',
+        math: `Attention(<span style="color:#58C4DD;font-weight:bold;"><i>Q</i></span>, <span style="color:#FFFF00;font-weight:bold;"><i>K</i></span>, <span style="color:#83C167;font-weight:bold;"><i>V</i></span>) = softmax( <span style="color:#58C4DD;font-weight:bold;"><i>Q</i></span><span style="color:#FFFF00;font-weight:bold;"><i>K</i><sup>T</sup></span> / <span style="color:#5CD0B3;">&radic;<i>d<sub>k</sub></i></span> ) <span style="color:#83C167;font-weight:bold;"><i>V</i></span>`,
+        caption: `<strong style="color:#FFFF00;">Інтерактивний Self-Attention:</strong> Клікніть на токен ліворуч або змініть масштаб √d_k угорі, щоб побачити насичення Softmax!`,
+        badge: '👆 Клікніть на будь-який токен Query ліворуч'
+      },
+      {
+        time: '01:09:35',
+        math: `<span style="color:#5CD0B3;font-weight:bold;">Encoder</span> (<i>K<sub>enc</sub>, V<sub>enc</sub></i>) &rarr; <span style="color:#9A72AC;font-weight:bold;">Decoder</span>: &nbsp;softmax( <i>QK</i><sup>T</sup> / &radic;<i>d<sub>k</sub></i> + <span style="color:#FC6255;"><i>M</i><sub>causal</sub>(&minus;&infin;)</span> ) <i>V</i>`,
+        caption: `<strong style="color:#5CD0B3;">Архітектура Transformer:</strong> Двонапрямний Encoder передає K, V у Cross-Attention декодера з трикутною маскою -∞.`,
+        badge: '✨ Потік тензорів крізь Encoder та Decoder'
+      }
+    ];
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = 310 * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setScene(idx) {
+      currentScene = idx;
+      t = 0;
+      sceneBtns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+      mathBanner.innerHTML = scenes[idx].math;
+      timeBadge.textContent = scenes[idx].time;
+      sceneCaption.innerHTML = scenes[idx].caption;
+      interactiveBadge.textContent = scenes[idx].badge;
+      scaleControl.style.display = (idx === 3) ? 'flex' : 'none';
+    }
+
+    sceneBtns.forEach(btn => {
+      btn.addEventListener('click', () => setScene(parseInt(btn.dataset.scene, 10)));
+    });
+
+    scaleSlider.addEventListener('input', (e) => {
+      sqrtDk = parseFloat(e.target.value);
+      scaleVal.textContent = sqrtDk.toFixed(1);
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      playPauseBtn.textContent = isPlaying ? '⏸ Пауза' : '▶ Пуск';
+    });
+
+    restartBtn.addEventListener('click', () => {
+      t = 0;
+      if (!isPlaying) {
+        isPlaying = true;
+        playPauseBtn.textContent = '⏸ Пауза';
+      }
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (currentScene === 3) {
+        const tokens = ['The', 'robot', 'picked', 'it', 'up'];
+        tokens.forEach((_, i) => {
+          const ty = 62 + i * 48;
+          if (x >= 24 && x <= 165 && y >= ty - 18 && y <= ty + 18) {
+            selectedTokenIdx = i;
+          }
+        });
+      } else if (currentScene === 1) {
+        word2vecMode = (word2vecMode + 1) % 2;
+      } else {
+        t += 1.4;
+      }
+    });
+
+    function drawCoordinatePlane(w, h) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(88, 196, 221, 0.065)';
+      ctx.lineWidth = 1;
+      const step = 40;
+      for (let x = step; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = step; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawGlowBox(x, y, w, h, r, fill, stroke, glowColor = null, lineWidth = 1.8) {
+      ctx.save();
+      if (glowColor) {
+        ctx.shadowColor = glowColor;
+        ctx.shadowBlur = 14;
+      }
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke(); }
+      ctx.restore();
+    }
+
+    function drawGlowArrow(x1, y1, x2, y2, color, width = 2.2, alpha = 1, glow = true) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (glow) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 10;
+      }
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const head = 7 + width * 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBezierBeamWithParticle(x1, y1, cx1, cy1, cx2, cy2, x2, y2, color, weight, phase) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(cx1, cy1, cx2, cy2, x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1 + weight * 7;
+      ctx.globalAlpha = 0.18 + weight * 0.82;
+      if (weight > 0.25) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+      }
+      ctx.stroke();
+
+      if (weight > 0.12) {
+        const u = (phase % 1 + 1) % 1;
+        const inv = 1 - u;
+        const px = inv*inv*inv*x1 + 3*inv*inv*u*cx1 + 3*inv*u*u*cx2 + u*u*u*x2;
+        const py = inv*inv*inv*y1 + 3*inv*inv*u*cy1 + 3*inv*u*u*cy2 + u*u*u*y2;
+        ctx.globalAlpha = Math.min(1, weight * 1.6);
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(px, py, 2.5 + weight * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function renderScene0(w, h) {
+      const tiers = [
+        { title: 'Word-level', desc: '|V| > 500k • OOV → [UNK]', color: C.RED, tokens: ['Transformers', 'are', '[UNK]'], y: 58 },
+        { title: 'Character-level', desc: '|V| ≈ 256 • L занадто довга', color: C.GOLD, tokens: ['u', 'n', 'a', 'f', 'f', 'a', 'b', 'l', 'e'], y: 152 },
+        { title: 'Subword (BPE)', desc: '|V| ≈ 50k–100k • Оптимум LLM', color: C.BLUE, tokens: ['un', '##aff', '##able'], y: 244 }
+      ];
+
+      tiers.forEach((tier, idx) => {
+        ctx.fillStyle = tier.color;
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(tier.title, 28, tier.y - 6);
+        ctx.fillStyle = C.MUTED;
+        ctx.font = '12px sans-serif';
+        ctx.fillText(tier.desc, 28, tier.y + 14);
+
+        let curX = 240;
+        tier.tokens.forEach((tok, j) => {
+          const floatY = idx === 2 ? Math.sin(t * 2.6 - j * 0.9) * 3 : 0;
+          ctx.font = 'bold 14px monospace';
+          const tw = Math.max(34, ctx.measureText(tok).width + 24);
+          const isGlow = idx === 2 || tok === '[UNK]';
+          drawGlowBox(curX, tier.y - 18 + floatY, tw, 34, 7, idx === 2 ? 'rgba(88,196,221,0.18)' : 'rgba(255,255,255,0.04)', tier.color, isGlow ? tier.color : null, idx === 2 ? 2.2 : 1.5);
+          ctx.fillStyle = tok === '[UNK]' ? C.YELLOW : C.WHITE;
+          ctx.fillText(tok, curX + 12, tier.y + 4 + floatY);
+          curX += tw + 9;
+        });
+      });
+
+      if (w > 640) {
+        const rx = w - 285;
+        drawGlowBox(rx, 24, 255, 258, 12, 'rgba(11, 16, 27, 0.92)', 'rgba(88,196,221,0.45)', C.BLUE, 1.5);
+        ctx.fillStyle = C.YELLOW;
+        ctx.font = 'bold 14px Georgia, serif';
+        ctx.fillText('Ітеративне злиття BPE:', rx + 18, 52);
+
+        const stages = [
+          { label: '0. ["l", "o", "w", "e", "r"]', col: C.MUTED },
+          { label: '1. ("e","r") → ["l","o","w","er"]', col: C.BLUE },
+          { label: '2. ("l","o") → ["lo","w","er"]', col: C.TEAL },
+          { label: '3. ("lo","w") → ["low", "er"]', col: C.GREEN },
+          { label: '✓ ID токенів: [841, 92]', col: C.YELLOW }
+        ];
+        const activeIdx = Math.floor((t * 0.95) % stages.length);
+        stages.forEach((st, i) => {
+          const sy = 90 + i * 40;
+          const isAct = i === activeIdx;
+          if (isAct) drawGlowBox(rx + 12, sy - 18, 230, 30, 6, 'rgba(88,196,221,0.16)', st.col, st.col, 1.5);
+          ctx.fillStyle = isAct ? st.col : 'rgba(236,236,236,0.45)';
+          ctx.font = isAct ? 'bold 12.5px monospace' : '12px monospace';
+          ctx.fillText(st.label, rx + 20, sy + 2);
+        });
+      }
+    }
+
+    function renderScene1(w, h) {
+      drawGlowBox(26, 22, 310, 264, 12, 'rgba(11, 16, 27, 0.9)', 'rgba(131,193,103,0.45)', null, 1.5);
+      const isCBOW = word2vecMode === 0;
+      ctx.fillStyle = isCBOW ? C.BLUE : C.YELLOW;
+      ctx.font = 'bold 14px Georgia, serif';
+      ctx.fillText(isCBOW ? 'CBOW: Контекст → Центральне w_t' : 'Skip-gram: Центральне w_t → Контекст', 42, 48);
+
+      const ctxLabels = ['w(t-2)', 'w(t-1)', 'w(t+1)', 'w(t+2)'];
+      const centerY = 162;
+      const leftX = 48;
+      const rightX = 240;
+
+      ctxLabels.forEach((lbl, i) => {
+        const cy = 84 + i * 52;
+        const boxX = isCBOW ? leftX : rightX;
+        drawGlowBox(boxX, cy - 14, 70, 28, 6, 'rgba(88,196,221,0.15)', C.BLUE, null, 1.5);
+        ctx.fillStyle = C.WHITE;
+        ctx.font = '12.5px Georgia, serif';
+        ctx.fillText(lbl, boxX + 14, cy + 4);
+
+        if (isCBOW) {
+          drawBezierBeamWithParticle(leftX + 72, cy, 160, cy, 185, centerY, rightX - 2, centerY, C.BLUE, 0.55, t * 0.9 + i * 0.2);
+        } else {
+          drawBezierBeamWithParticle(leftX + 72, centerY, 155, centerY, 175, cy, rightX - 2, cy, C.YELLOW, 0.55, t * 0.9 + i * 0.2);
+        }
+      });
+
+      const targetX = isCBOW ? rightX : leftX;
+      drawGlowBox(targetX, centerY - 20, 70, 40, 8, 'rgba(255,255,0,0.22)', C.YELLOW, C.YELLOW, 2);
+      ctx.fillStyle = C.YELLOW;
+      ctx.font = 'bold 15px Georgia, serif';
+      ctx.fillText('w(t)', targetX + 19, centerY + 5);
+
+      const ox = 395;
+      const oy = 260;
+      drawGlowArrow(ox, oy, Math.min(w - 35, ox + 450), oy, C.MUTED, 1.6, 0.7, false);
+      drawGlowArrow(ox, oy, ox, 32, C.MUTED, 1.6, 0.7, false);
+
+      ctx.fillStyle = C.MUTED;
+      ctx.font = 'italic 13px Georgia, serif';
+      ctx.fillText('Семантична вісь статі →', ox + 280, oy + 22);
+      ctx.fillText('↑ Королівський титул', ox + 12, 46);
+
+      const pMan   = { x: ox + 75,  y: oy - 52 };
+      const pKing  = { x: ox + 120, y: oy - 185 };
+      const pWoman = { x: ox + 265, y: oy - 44 };
+      const pQueen = { x: ox + 310, y: oy - 177 };
+
+      drawGlowArrow(pMan.x, pMan.y, pKing.x, pKing.y, C.YELLOW, 3, 0.95, true);
+      drawGlowArrow(pWoman.x, pWoman.y, pQueen.x, pQueen.y, C.YELLOW, 3, 0.95, true);
+
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      drawGlowArrow(pMan.x, pMan.y, pWoman.x, pWoman.y, C.TEAL, 2.2, 0.85, false);
+      drawGlowArrow(pKing.x, pKing.y, pQueen.x, pQueen.y, C.TEAL, 2.2, 0.85, false);
+      ctx.restore();
+
+      [
+        { p: pMan,   c: C.BLUE,   lbl: 'man' },
+        { p: pKing,  c: C.YELLOW, lbl: 'king' },
+        { p: pWoman, c: C.GREEN,  lbl: 'woman' },
+        { p: pQueen, c: C.PURPLE, lbl: 'queen' }
+      ].forEach(n => {
+        ctx.save();
+        ctx.shadowColor = n.c;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(n.p.x, n.p.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = n.c;
+        ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = C.WHITE;
+        ctx.font = 'bold 15px Georgia, serif';
+        ctx.fillText(n.lbl, n.p.x + 12, n.p.y + 5);
+      });
+    }
+
+    function renderScene2(w, h) {
+      const words = ['The', 'trophy', "didn't", 'fit', 'because', 'it'];
+      const startX = 72;
+      const gap = Math.min(138, (w - 140) / 5.1);
+
+      ctx.fillStyle = C.RED;
+      ctx.font = 'bold 13.5px sans-serif';
+      ctx.fillText('1. RNN / LSTM: Послідовна передача стану h₁ → h₂ → … → h₆ (інформація про початок згасає)', 28, 34);
+
+      const activeStep = (t * 1.6) % 6;
+      words.forEach((word, i) => {
+        const cx = startX + i * gap;
+        const cy = 84;
+        const fade = Math.max(0.14, 0.85 - i * 0.14);
+        drawGlowBox(cx - 28, cy - 19, 56, 38, 8, `rgba(252, 98, 85, ${fade * 0.4})`, C.RED, i === Math.floor(activeStep) ? C.RED : null, 1.8);
+        ctx.fillStyle = C.WHITE;
+        ctx.font = 'bold 14px Georgia, serif';
+        ctx.fillText(`h${i + 1}`, cx - 9, cy + 5);
+        ctx.fillStyle = i === 1 ? C.YELLOW : C.MUTED;
+        ctx.font = i === 1 ? 'bold 13px monospace' : '12px monospace';
+        ctx.fillText(word, cx - 24, cy + 38);
+        if (i < words.length - 1) drawGlowArrow(cx + 30, cy, cx + gap - 30, cy, C.RED, 2.2, 0.75, false);
+      });
+
+      ctx.fillStyle = C.BLUE;
+      ctx.font = 'bold 13.5px sans-serif';
+      ctx.fillText('2. Self-Attention: Прямий зв’язок O(1) — займенник "it" напряму звертається до "trophy" (α = 0.64)', 28, 168);
+
+      const weights = [0.05, 0.64, 0.05, 0.09, 0.05, 0.12];
+      const itX = startX + 5 * gap;
+      const baseY = 264;
+
+      words.forEach((word, i) => {
+        const cx = startX + i * gap;
+        const wgt = weights[i];
+        const midX = (itX + cx) / 2;
+        const peakY = baseY - 26 - (5 - i) * 16;
+
+        drawBezierBeamWithParticle(itX, baseY - 18, midX, peakY, midX, peakY, cx, baseY - 18, i === 1 ? C.YELLOW : C.BLUE, wgt, t * 0.85 + i * 0.15);
+
+        const isHi = i === 1 || i === 5;
+        const col = i === 1 ? C.YELLOW : (i === 5 ? C.BLUE : 'rgba(88,196,221,0.45)');
+        drawGlowBox(cx - 38, baseY - 17, 76, 34, 7, i === 1 ? 'rgba(255,255,0,0.22)' : 'rgba(88,196,221,0.15)', col, isHi ? col : null, isHi ? 2.2 : 1.3);
+        ctx.fillStyle = i === 1 ? C.YELLOW : C.WHITE;
+        ctx.font = isHi ? 'bold 13px monospace' : '12px monospace';
+        ctx.fillText(word, cx - 26, baseY + 5);
+      });
+    }
+
+    function renderScene3(w, h) {
+      const tokens = ['The', 'robot', 'picked', 'it', 'up'];
+      const rawLogits = [
+        [10.5,  8.8,  2.0,  1.2,  1.2],
+        [ 4.2, 11.4,  6.1,  2.1,  2.1],
+        [ 1.8,  8.2, 10.6,  4.0,  4.5],
+        [ 2.5, 13.5,  5.2,  4.1,  2.4],
+        [ 1.5,  5.4, 11.8,  4.2,  6.8]
+      ];
+
+      const logits = rawLogits[selectedTokenIdx].map(s => s / (sqrtDk / 4.0));
+      const maxL = Math.max(...logits);
+      const exps = logits.map(l => Math.exp(l - maxL));
+      const sumExp = exps.reduce((a, b) => a + b, 0);
+      const weights = exps.map(e => e / sumExp);
+
+      ctx.fillStyle = C.BLUE;
+      ctx.font = 'bold 13px monospace';
+      ctx.fillText('1. Запит Query (qᵢ)', 28, 28);
+
+      const selY = 62 + selectedTokenIdx * 48;
+      tokens.forEach((tok, i) => {
+        const y = 62 + i * 48;
+        const isSel = i === selectedTokenIdx;
+        drawGlowBox(28, y - 16, 134, 32, 7, isSel ? 'rgba(88,196,221,0.28)' : 'rgba(11,16,27,0.9)', isSel ? C.BLUE : 'rgba(88,196,221,0.3)', isSel ? C.BLUE : null, isSel ? 2.2 : 1.2);
+        ctx.fillStyle = isSel ? C.WHITE : C.MUTED;
+        ctx.font = isSel ? 'bold 13.5px monospace' : '12.5px monospace';
+        ctx.fillText((isSel ? '▶ q(' : '  q(') + tok + ')', 38, y + 5);
+      });
+
+      const col2X = Math.min(310, w * 0.36);
+      ctx.fillStyle = C.YELLOW;
+      ctx.font = 'bold 13px monospace';
+      ctx.fillText('2. Ключі Key (kⱼ) та ваги αᵢⱼ', col2X, 28);
+
+      tokens.forEach((tok, j) => {
+        const ky = 62 + j * 48;
+        const wgt = weights[j];
+        const beamCol = wgt > 0.35 ? C.YELLOW : C.BLUE;
+
+        drawBezierBeamWithParticle(162, selY, 225, selY, col2X - 55, ky, col2X, ky, beamCol, wgt, t * 0.95 + j * 0.18);
+        drawGlowBox(col2X, ky - 16, 185, 32, 7, 'rgba(11,16,27,0.92)', wgt > 0.35 ? C.YELLOW : 'rgba(255,255,0,0.35)', wgt > 0.45 ? C.YELLOW : null, 1.5);
+        drawGlowBox(col2X + 3, ky - 13, Math.max(6, wgt * 179), 26, 5, wgt > 0.35 ? 'rgba(255,255,0,0.28)' : 'rgba(88,196,221,0.2)', null);
+
+        ctx.fillStyle = C.WHITE;
+        ctx.font = '13px monospace';
+        ctx.fillText(`k(${tok})`, col2X + 12, ky + 5);
+        ctx.fillStyle = C.YELLOW;
+        ctx.font = 'bold 13px monospace';
+        ctx.fillText(`${(wgt * 100).toFixed(1)}%`, col2X + 126, ky + 5);
+      });
+
+      const col3X = Math.min(600, w * 0.67);
+      if (w > 560) {
+        ctx.fillStyle = C.GREEN;
+        ctx.font = 'bold 13px monospace';
+        ctx.fillText('3. Вихід zᵢ = ∑ αᵢⱼ vⱼ', col3X, 28);
+
+        const outY = 158;
+        tokens.forEach((_, j) => {
+          const ky = 62 + j * 48;
+          const wgt = weights[j];
+          drawBezierBeamWithParticle(col2X + 185, ky, col2X + 240, ky, col3X - 30, outY, col3X + 12, outY, C.GREEN, wgt, t * 0.95 + j * 0.15);
+        });
+
+        const cardW = Math.min(245, w - col3X - 28);
+        drawGlowBox(col3X + 12, outY - 60, cardW, 120, 10, 'rgba(131,193,103,0.15)', C.GREEN, C.GREEN, 2);
+        ctx.fillStyle = C.WHITE;
+        ctx.font = 'bold 15px Georgia, serif';
+        ctx.fillText(`Вектор z("${tokens[selectedTokenIdx]}")`, col3X + 26, outY - 28);
+
+        const topIdx = weights.indexOf(Math.max(...weights));
+        ctx.fillStyle = C.YELLOW;
+        ctx.font = 'bold 13px monospace';
+        ctx.fillText(`Макс: "${tokens[topIdx]}" (${(weights[topIdx] * 100).toFixed(0)}%)`, col3X + 26, outY - 2);
+
+        ctx.fillStyle = sqrtDk <= 3 ? C.RED : C.TEAL;
+        ctx.font = '12px sans-serif';
+        ctx.fillText(sqrtDk <= 3 ? '⚠ Насичення Softmax (градієнт → 0)' : '✓ Стабільна дисперсія (Var ≈ 1)', col3X + 26, outY + 24);
+        ctx.fillStyle = C.MUTED;
+        ctx.font = '12px monospace';
+        ctx.fillText(`Масштаб: 1/√d_k = 1/${sqrtDk.toFixed(0)}`, col3X + 26, outY + 46);
+      }
+    }
+
+    function renderScene4(w, h) {
+      const encX = 28;
+      const boxW = Math.min(240, w * 0.29);
+
+      drawGlowBox(encX, 20, boxW, 268, 12, 'rgba(92, 208, 179, 0.07)', C.TEAL, C.TEAL, 1.8);
+      ctx.fillStyle = C.TEAL;
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('ENCODER (Двонапрямний)', encX + 16, 44);
+
+      [
+        { name: 'Input + sin/cos PE', y: 238, c: C.BLUE },
+        { name: 'Multi-Head Self-Attention', y: 180, c: C.TEAL },
+        { name: 'Add & LayerNorm', y: 130, c: C.BLUE },
+        { name: 'Feed-Forward (FFN)', y: 76, c: C.GREEN }
+      ].forEach(b => {
+        drawGlowBox(encX + 14, b.y, boxW - 28, 36, 7, 'rgba(11,16,27,0.92)', b.c, null, 1.5);
+        ctx.fillStyle = C.WHITE;
+        ctx.font = '12px monospace';
+        ctx.fillText(b.name, encX + 24, b.y + 22);
+      });
+
+      const decX = encX + boxW + 56;
+      drawGlowBox(decX, 20, boxW + 24, 268, 12, 'rgba(154, 114, 172, 0.09)', C.PURPLE, C.PURPLE, 1.8);
+      ctx.fillStyle = C.PURPLE;
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('DECODER (Авторегресійний)', decX + 16, 44);
+
+      [
+        { name: '1. Masked Self-Attention (-∞)', y: 238, c: C.RED },
+        { name: '2. Cross-Attention (Q, K_enc, V_enc)', y: 174, c: C.YELLOW },
+        { name: '3. Feed-Forward + Add & Norm', y: 118, c: C.GREEN },
+        { name: 'Linear + Softmax → P(w_t+1)', y: 66, c: C.PURPLE }
+      ].forEach(b => {
+        drawGlowBox(decX + 14, b.y, boxW - 4, 36, 7, 'rgba(11,16,27,0.92)', b.c, b.c === C.YELLOW ? C.YELLOW : null, 1.5);
+        ctx.fillStyle = C.WHITE;
+        ctx.font = '12px monospace';
+        ctx.fillText(b.name, decX + 22, b.y + 22);
+      });
+
+      drawBezierBeamWithParticle(encX + boxW, 94, encX + boxW + 38, 94, decX - 28, 192, decX + 14, 192, C.YELLOW, 0.85, t * 0.9);
+      ctx.fillStyle = C.YELLOW;
+      ctx.font = 'bold 13px Georgia, serif';
+      ctx.fillText('K, V', encX + boxW + 14, 134);
+
+      const maskX = decX + boxW + 52;
+      if (w - maskX > 185) {
+        drawGlowBox(maskX - 8, 20, w - maskX - 18, 268, 12, 'rgba(11,16,27,0.9)', 'rgba(252,98,85,0.45)', null, 1.5);
+        ctx.fillStyle = C.RED;
+        ctx.font = 'bold 14px Georgia, serif';
+        ctx.fillText('Causal Mask (Look-Ahead):', maskX + 10, 46);
+
+        const cell = 38;
+        const toks = ['<s>', 'Я', 'вчу', 'LLM'];
+        for (let r = 0; r < 4; r++) {
+          ctx.fillStyle = C.MUTED;
+          ctx.font = '12px monospace';
+          ctx.fillText(toks[r], maskX + 10, 86 + r * cell);
+          for (let c = 0; c < 4; c++) {
+            const cx = maskX + 46 + c * cell;
+            const cy = 64 + r * cell;
+            const masked = c > r;
+            drawGlowBox(cx, cy, cell - 4, cell - 4, 5, masked ? 'rgba(252, 98, 85, 0.2)' : 'rgba(88, 196, 221, 0.24)', masked ? C.RED : C.BLUE, null, 1.3);
+            ctx.fillStyle = masked ? C.RED : C.WHITE;
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText(masked ? '-∞' : 'α', cx + (masked ? 8 : 13), cy + 22);
+          }
+        }
+        ctx.fillStyle = C.YELLOW;
+        ctx.font = 'bold 13px Georgia, serif';
+        ctx.fillText('exp(-∞) = 0 після Softmax!', maskX + 14, 244);
+        ctx.fillStyle = C.MUTED;
+        ctx.font = '11.5px sans-serif';
+        ctx.fillText('Блокує підглядання у майбутнє', maskX + 14, 266);
+      }
+    }
+
+    function animate(now) {
+      const dt = (now - lastTs) / 1000;
+      lastTs = now;
+      if (isPlaying) t += dt;
+
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+
+      ctx.clearRect(0, 0, w, h);
+      drawCoordinatePlane(w, h);
+
+      if (currentScene === 0) renderScene0(w, h);
+      else if (currentScene === 1) renderScene1(w, h);
+      else if (currentScene === 2) renderScene2(w, h);
+      else if (currentScene === 3) renderScene3(w, h);
+      else if (currentScene === 4) renderScene4(w, h);
+
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
